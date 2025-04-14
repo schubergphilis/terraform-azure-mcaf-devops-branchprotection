@@ -19,16 +19,18 @@ locals {
 }
 
 resource "azuredevops_branch_policy_min_reviewers" "this" {
+  count = try(var.branch_policy_min_reviewers_settings.reviewer_count, null) != null ? 1 : 0
+
   project_id = local.azuredevops_project.id
   for_each   = local.branch_policy_scope
 
   settings {
     reviewer_count                         = var.branch_policy_min_reviewers_settings.reviewer_count
-    submitter_can_vote                     = var.branch_policy_min_reviewers_settings.submitter_can_vote
-    last_pusher_cannot_approve             = var.branch_policy_min_reviewers_settings.last_pusher_cannot_approve
-    allow_completion_with_rejects_or_waits = var.branch_policy_min_reviewers_settings.allow_completion_with_rejects_or_waits
-    on_push_reset_approved_votes           = var.branch_policy_min_reviewers_settings.on_push_reset_approved_votes
-    on_last_iteration_require_vote         = var.branch_policy_min_reviewers_settings.on_last_iteration_require_vote
+    submitter_can_vote                     = try(var.branch_policy_min_reviewers_settings.submitter_can_vote, false)
+    last_pusher_cannot_approve             = try(var.branch_policy_min_reviewers_settings.last_pusher_cannot_approve, true)
+    allow_completion_with_rejects_or_waits = try(var.branch_policy_min_reviewers_settings.allow_completion_with_rejects_or_waits, false)
+    on_push_reset_approved_votes           = try(var.branch_policy_min_reviewers_settings.on_push_reset_approved_votes, true)
+    on_last_iteration_require_vote         = try(var.branch_policy_min_reviewers_settings.on_last_iteration_require_vote, true)
 
     scope {
       repository_id  = each.value.repository_id
@@ -37,6 +39,7 @@ resource "azuredevops_branch_policy_min_reviewers" "this" {
     }
   }
 }
+
 
 resource "azuredevops_branch_policy_work_item_linking" "this" {
   project_id = local.azuredevops_project.id
