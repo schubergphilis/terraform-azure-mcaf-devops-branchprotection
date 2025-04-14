@@ -1,24 +1,3 @@
-
-#locals {
-#  branch_policy_scope = merge(
-#    { for repo in azuredevops_git_repository.empty : repo.name => {
-#      repository_id  = repo.id
-#      repository_ref = repo.default_branch
-#      match_type     = "Exact"
-#    }},
-#    { for repo in azuredevops_git_repository.import_public : repo.name => {
-#      repository_id  = repo.id
-#      repository_ref = repo.default_branch
-#      match_type     = "Exact"
-#    }},
-#    { for repo in azuredevops_git_repository.import_private : repo.name => {
-#      repository_id  = repo.id
-#      repository_ref = repo.default_branch
-#      match_type     = "Exact"
-#    }}
-#  )
-#}
-
 data "azuredevops_project" "this" {
   name = var.azure_devops.project_name
 }
@@ -44,9 +23,12 @@ resource "azuredevops_branch_policy_min_reviewers" "this" {
   for_each   = local.branch_policy_scope
 
   settings {
-    reviewer_count                 = 1
-    last_pusher_cannot_approve     = true
-    on_last_iteration_require_vote = true
+    reviewer_count                         = var.branch_policy_min_reviewers_settings.reviewer_count
+    submitter_can_vote                     = var.branch_policy_min_reviewers_settings.submitter_can_vote
+    last_pusher_cannot_approve             = var.branch_policy_min_reviewers_settings.last_pusher_cannot_approve
+    allow_completion_with_rejects_or_waits = var.branch_policy_min_reviewers_settings.allow_completion_with_rejects_or_waits
+    on_push_reset_approved_votes           = var.branch_policy_min_reviewers_settings.on_push_reset_approved_votes
+    on_last_iteration_require_vote         = var.branch_policy_min_reviewers_settings.on_last_iteration_require_vote
 
     scope {
       repository_id  = each.value.repository_id
@@ -96,7 +78,7 @@ resource "azuredevops_branch_policy_merge_types" "this" {
   blocking = true
 
   settings {
-    allow_squash                 = true
+    allow_squash                  = true
     allow_rebase_and_fast_forward = true
 
     scope {
