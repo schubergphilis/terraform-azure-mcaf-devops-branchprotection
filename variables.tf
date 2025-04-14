@@ -47,4 +47,5 @@ EOT
     on_push_reset_approved_votes           = optional(bool)
     on_last_iteration_require_vote         = optional(bool)
   })
+  default = null
 }
