@@ -19,13 +19,15 @@ locals {
 }
 
 resource "azuredevops_branch_policy_min_reviewers" "this" {
-  count = try(var.branch_policy_min_reviewers_settings.reviewer_count, null) != null ? 1 : 0
+  for_each = (
+    var.branch_policy_min_reviewers_settings != null &&
+    try(var.branch_policy_min_reviewers_settings.reviewer_count, null) != null
+  ) ? local.branch_policy_scope : {}
 
   project_id = local.azuredevops_project.id
-  for_each   = local.branch_policy_scope
 
   settings {
-    reviewer_count                         = var.branch_policy_min_reviewers_settings.reviewer_count
+    reviewer_count                         = try(var.branch_policy_min_reviewers_settings.reviewer_count, 1)
     submitter_can_vote                     = try(var.branch_policy_min_reviewers_settings.submitter_can_vote, false)
     last_pusher_cannot_approve             = try(var.branch_policy_min_reviewers_settings.last_pusher_cannot_approve, true)
     allow_completion_with_rejects_or_waits = try(var.branch_policy_min_reviewers_settings.allow_completion_with_rejects_or_waits, false)

@@ -35,19 +35,6 @@ DESCRIPTION
 }
 
 variable "branch_policy_min_reviewers_settings" {
-  description = "Settings for the branch policy minimum reviewers"
-  type = object({
-    reviewer_count                         = number
-    submitter_can_vote                     = optional(bool, false)
-    last_pusher_cannot_approve             = optional(bool, true)
-    allow_completion_with_rejects_or_waits = optional(bool, false)
-    on_push_reset_approved_votes           = optional(bool, true)
-    on_last_iteration_require_vote         = optional(bool, true)
-  })
-  default = {}
-}
-
-variable "branch_policy_min_reviewers_settings" {
   description = <<EOT
 Optional settings for the branch policy minimum reviewers. If not provided, the policy will be skipped.
 If provided, 'reviewer_count' is required.
