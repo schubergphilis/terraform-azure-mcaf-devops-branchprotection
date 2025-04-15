@@ -64,8 +64,8 @@ resource "azuredevops_branch_policy_comment_resolution" "this" {
   project_id = local.azuredevops_project.id
   for_each   = local.branch_policy_scope
 
-  enabled  = var.azuredevops_branch_policy_work_item_linking.enabled
-  blocking = var.azuredevops_branch_policy_work_item_linking.blocking
+  enabled  = var.azuredevops_branch_policy_comment_resolution.enabled
+  blocking = var.azuredevops_branch_policy_comment_resolution.blocking
 
   settings {
     scope {
