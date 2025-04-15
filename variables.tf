@@ -44,7 +44,7 @@ EOT
     submitter_can_vote                     = optional(bool, false)
     last_pusher_cannot_approve             = optional(bool, false)
     allow_completion_with_rejects_or_waits = optional(bool, false)
-    on_push_reset_approved_votes           = optional(bool, false)
+    on_push_reset_approved_votes           = optional(bool, true)
     on_last_iteration_require_vote         = optional(bool, false)
     on_push_reset_all_votes                = optional(bool, false)
   })
