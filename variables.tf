@@ -59,19 +59,3 @@ EOT
   })
   default = null
 }
-
-resource "azuredevops_branch_policy_work_item_linking" "this" {
-  project_id = local.azuredevops_project.id
-  for_each   = local.branch_policy_scope
-
-  enabled  = true
-  blocking = false
-
-  settings {
-    scope {
-      repository_id  = each.value.repository_id
-      repository_ref = each.value.repository_ref
-      match_type     = each.value.match_type
-    }
-  }
-}
