@@ -57,5 +57,8 @@ EOT
     enabled  = optional(bool, false)
     blocking = optional(bool, false)
   })
-  default = null
+  default = {
+    enabled  = false
+    blocking = false
+  }
 }
