@@ -54,7 +54,7 @@ variable "azuredevops_branch_policy_work_item_linking" {
 Optional settings for the branch policy work item linking.
 EOT
   type = object({
-    enabled  = optional(bool, true)
+    enabled  = optional(bool, false)
     blocking = optional(bool, false)
   })
   default = null
