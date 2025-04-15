@@ -44,12 +44,9 @@ resource "azuredevops_branch_policy_min_reviewers" "this" {
 }
 
 resource "azuredevops_branch_policy_work_item_linking" "this" {
-  for_each = (
-    var.branch_policy_min_reviewers_settings != null &&
-    try(var.branch_policy_min_reviewers_settings.reviewer_count, null) != null
-  ) ? local.branch_policy_scope : {}
-
+  
   project_id = local.azuredevops_project.id
+  for_each   = local.branch_policy_scope
 
   enabled  = var.azuredevops_branch_policy_work_item_linking.enabled
   blocking = var.azuredevops_branch_policy_work_item_linking.blocking
