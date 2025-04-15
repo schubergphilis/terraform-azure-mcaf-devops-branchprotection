@@ -33,6 +33,7 @@ resource "azuredevops_branch_policy_min_reviewers" "this" {
     allow_completion_with_rejects_or_waits = try(var.branch_policy_min_reviewers_settings.allow_completion_with_rejects_or_waits, false)
     on_push_reset_approved_votes           = try(var.branch_policy_min_reviewers_settings.on_push_reset_approved_votes, true)
     on_last_iteration_require_vote         = try(var.branch_policy_min_reviewers_settings.on_last_iteration_require_vote, true)
+    on_push_reset_all_votes                = try(var.branch_policy_min_reviewers_settings.on_push_reset_all_votes, false)
 
     scope {
       repository_id  = each.value.repository_id
@@ -43,78 +44,79 @@ resource "azuredevops_branch_policy_min_reviewers" "this" {
 }
 
 
-resource "azuredevops_branch_policy_work_item_linking" "this" {
-  project_id = local.azuredevops_project.id
-  for_each   = local.branch_policy_scope
-
-  enabled  = true
-  blocking = false
-
-  settings {
-    scope {
-      repository_id  = each.value.repository_id
-      repository_ref = each.value.repository_ref
-      match_type     = each.value.match_type
-    }
-  }
-}
-
-resource "azuredevops_branch_policy_comment_resolution" "this" {
-  project_id = local.azuredevops_project.id
-  for_each   = local.branch_policy_scope
-
-  enabled  = true
-  blocking = true
-
-  settings {
-    scope {
-      repository_id  = each.value.repository_id
-      repository_ref = each.value.repository_ref
-      match_type     = each.value.match_type
-    }
-  }
-}
-
-resource "azuredevops_branch_policy_merge_types" "this" {
-  project_id = local.azuredevops_project.id
-  for_each   = local.branch_policy_scope
-
-  enabled  = true
-  blocking = true
-
-  settings {
-    allow_squash                  = true
-    allow_rebase_and_fast_forward = true
-
-    scope {
-      repository_id  = each.value.repository_id
-      repository_ref = each.value.repository_ref
-      match_type     = each.value.match_type
-    }
-  }
-}
-
-data "azuredevops_group" "this" {
-  project_id = local.azuredevops_project.id
-  name       = "${var.short_name} Team"
-}
-
-resource "azuredevops_branch_policy_auto_reviewers" "this" {
-  project_id = local.azuredevops_project.id
-  for_each   = local.branch_policy_scope
-
-  enabled  = true
-  blocking = true
-
-  settings {
-    auto_reviewer_ids  = [data.azuredevops_group.this.origin_id]
-    submitter_can_vote = false
-    message            = "Code Reviewers have been automatically assigned to this pull request."
-
-    scope {
-      repository_id  = each.value.repository_id
-      repository_ref = each.value.repository_ref
-      match_type     = each.value.match_type
-    }
-  }
-}
+#resource "azuredevops_branch_policy_work_item_linking" "this" {
+#  project_id = local.azuredevops_project.id
+#  for_each   = local.branch_policy_scope
+#
+#  enabled  = true
+#  blocking = false
+#
+#  settings {
+#    scope {
+#      repository_id  = each.value.repository_id
+#      repository_ref = each.value.repository_ref
+#      match_type     = each.value.match_type
+#    }
+#  }
+#}
+#
+#resource "azuredevops_branch_policy_comment_resolution" "this" {
+#  project_id = local.azuredevops_project.id
+#  for_each   = local.branch_policy_scope
+#
+#  enabled  = true
+#  blocking = true
+#
+#  settings {
+#    scope {
+#      repository_id  = each.value.repository_id
+#      repository_ref = each.value.repository_ref
+#      match_type     = each.value.match_type
+#    }
+#  }
+#}
+#
+#resource "azuredevops_branch_policy_merge_types" "this" {
+#  project_id = local.azuredevops_project.id
+#  for_each   = local.branch_policy_scope
+#
+#  enabled  = true
+#  blocking = true
+#
+#  settings {
+#    allow_squash                  = true
+#    allow_rebase_and_fast_forward = true
+#
+#    scope {
+#      repository_id  = each.value.repository_id
+#      repository_ref = each.value.repository_ref
+#      match_type     = each.value.match_type
+#    }
+#  }
+#}
+#
+#data "azuredevops_group" "this" {
+#  project_id = local.azuredevops_project.id
+#  name       = "${var.short_name} Team"
+#}
+#
+#resource "azuredevops_branch_policy_auto_reviewers" "this" {
+#  project_id = local.azuredevops_project.id
+#  for_each   = local.branch_policy_scope
+#
+#  enabled  = true
+#  blocking = true
+#
+#  settings {
+#    auto_reviewer_ids  = [data.azuredevops_group.this.origin_id]
+#    submitter_can_vote = false
+#    message            = "Code Reviewers have been automatically assigned to this pull request."
+#
+#    scope {
+#      repository_id  = each.value.repository_id
+#      repository_ref = each.value.repository_ref
+#      match_type     = each.value.match_type
+#    }
+#  }
+#}
+#
