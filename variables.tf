@@ -62,3 +62,17 @@ EOT
     blocking = false
   }
 }
+
+variable "azuredevops_branch_policy_comment_resolution" {
+  description = <<EOT
+Optional settings for the branch policy comment resolution.
+EOT
+  type = object({
+    enabled  = optional(bool, false)
+    blocking = optional(bool, false)
+  })
+  default = {
+    enabled  = false
+    blocking = false
+  }
+}

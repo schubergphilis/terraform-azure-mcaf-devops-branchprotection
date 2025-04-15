@@ -59,22 +59,22 @@ resource "azuredevops_branch_policy_work_item_linking" "this" {
     }
   }
 }
-#
-#resource "azuredevops_branch_policy_comment_resolution" "this" {
-#  project_id = local.azuredevops_project.id
-#  for_each   = local.branch_policy_scope
-#
-#  enabled  = true
-#  blocking = true
-#
-#  settings {
-#    scope {
-#      repository_id  = each.value.repository_id
-#      repository_ref = each.value.repository_ref
-#      match_type     = each.value.match_type
-#    }
-#  }
-#}
+
+resource "azuredevops_branch_policy_comment_resolution" "this" {
+  project_id = local.azuredevops_project.id
+  for_each   = local.branch_policy_scope
+
+  enabled  = var.azuredevops_branch_policy_work_item_linking.enabled
+  blocking = var.azuredevops_branch_policy_work_item_linking.blocking
+
+  settings {
+    scope {
+      repository_id  = each.value.repository_id
+      repository_ref = each.value.repository_ref
+      match_type     = each.value.match_type
+    }
+  }
+}
 #
 #resource "azuredevops_branch_policy_merge_types" "this" {
 #  project_id = local.azuredevops_project.id
