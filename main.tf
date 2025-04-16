@@ -98,10 +98,11 @@ resource "azuredevops_branch_policy_merge_types" "this" {
 }
 
 data "azuredevops_group" "this" {
-  for_each   = length(var.azuredevops_branch_policy_auto_reviewers.group_names) > 0 ? toset(var.azuredevops_branch_policy_auto_reviewers.group_names) : {}
+  for_each   = length(var.azuredevops_branch_policy_auto_reviewers.group_names) > 0 ? toset(var.azuredevops_branch_policy_auto_reviewers.group_names) : toset([])
   project_id = local.azuredevops_project.id
   name       = each.key
 }
+
 
 resource "azuredevops_branch_policy_auto_reviewers" "this" {
   for_each = length(var.azuredevops_branch_policy_auto_reviewers.group_names) > 0 ? local.branch_policy_scope : {}
