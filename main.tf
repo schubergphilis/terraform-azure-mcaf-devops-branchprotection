@@ -142,8 +142,11 @@ data "azuredevops_build_definition" "build_definition" {
 }
 
 
-output "id" {
-  value = data.azuredevops_build_definition.build_definition.id
+output "build_definition_ids" {
+  value = {
+    for k, v in data.azuredevops_build_definition.build_definition :
+    k => v.id
+  }
 }
 #resource "azuredevops_branch_policy_build_validation" "this" {
 #  for_each   = local.branch_policy_scope
