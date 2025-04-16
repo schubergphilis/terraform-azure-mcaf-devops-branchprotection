@@ -113,6 +113,7 @@ variable "azuredevops_branch_policy_auto_reviewers" {
     group_names        = []
     submitter_can_vote = false
     message            = "Code Reviewers have been automatically assigned to this pull request."
+    minimum_number_of_reviewers = 1
   }
 }
 
