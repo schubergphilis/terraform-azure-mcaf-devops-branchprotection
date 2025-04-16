@@ -76,3 +76,24 @@ EOT
     blocking = false
   }
 }
+
+variable "azuredevops_branch_policy_merge_types" {
+  description = "Settings for Azure DevOps branch policy merge types"
+  type = object({
+    enabled                       = optional(bool, false)
+    blocking                      = optional(bool, false)
+    allow_squash                  = optional(bool, false)
+    allow_rebase_and_fast_forward = optional(bool, false)
+    allow_basic_no_fast_forward   = optional(bool, false)
+    allow_rebase_with_merge       = optional(bool, false)
+  })
+  default = {
+    enabled  = false
+    blocking = false
+    allow_squash                  = false
+    allow_rebase_and_fast_forward = false
+    allow_basic_no_fast_forward   = false
+    allow_rebase_with_merge       = false
+  }
+}
+

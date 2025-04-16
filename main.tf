@@ -75,25 +75,27 @@ resource "azuredevops_branch_policy_comment_resolution" "this" {
     }
   }
 }
-#
-#resource "azuredevops_branch_policy_merge_types" "this" {
-#  project_id = local.azuredevops_project.id
-#  for_each   = local.branch_policy_scope
-#
-#  enabled  = true
-#  blocking = true
-#
-#  settings {
-#    allow_squash                  = true
-#    allow_rebase_and_fast_forward = true
-#
-#    scope {
-#      repository_id  = each.value.repository_id
-#      repository_ref = each.value.repository_ref
-#      match_type     = each.value.match_type
-#    }
-#  }
-#}
+
+resource "azuredevops_branch_policy_merge_types" "this" {
+  project_id = local.azuredevops_project.id
+  for_each   = local.branch_policy_scope
+
+  enabled  = var.azuredevops_branch_policy_merge_types.enabled
+  blocking = var.azuredevops_branch_policy_merge_types.blocking
+
+  settings {
+    allow_squash                  = var.azuredevops_branch_policy_merge_types.allow_squash
+    allow_rebase_and_fast_forward = var.azuredevops_branch_policy_merge_types.allow_rebase_and_fast_forward
+    allow_basic_no_fast_forward   = var.azuredevops_branch_policy_merge_types.allow_basic_no_fast_forward
+    allow_rebase_with_merge       = var.azuredevops_branch_policy_merge_types.allow_rebase_with_merge
+
+    scope {
+      repository_id  = each.value.repository_id
+      repository_ref = each.value.repository_ref
+      match_type     = each.value.match_type
+    }
+  }
+}
 #
 #data "azuredevops_group" "this" {
 #  project_id = local.azuredevops_project.id
