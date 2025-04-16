@@ -103,7 +103,6 @@ data "azuredevops_group" "this" {
   name       = each.key
 }
 
-
 resource "azuredevops_branch_policy_auto_reviewers" "this" {
   for_each = length(var.azuredevops_branch_policy_auto_reviewers.group_names) > 0 ? local.branch_policy_scope : {}
 
