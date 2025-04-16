@@ -105,6 +105,7 @@ variable "azuredevops_branch_policy_auto_reviewers" {
     group_names         = list(string)
     submitter_can_vote  = bool
     message             = string
+    minimum_number_of_reviewers = number
   })
   default = {
     enabled            = false
