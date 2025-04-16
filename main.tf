@@ -96,29 +96,30 @@ resource "azuredevops_branch_policy_merge_types" "this" {
     }
   }
 }
-#
-#data "azuredevops_group" "this" {
-#  project_id = local.azuredevops_project.id
-#  name       = "${var.short_name} Team"
-#}
-#
-#resource "azuredevops_branch_policy_auto_reviewers" "this" {
-#  project_id = local.azuredevops_project.id
-#  for_each   = local.branch_policy_scope
-#
-#  enabled  = true
-#  blocking = true
-#
-#  settings {
-#    auto_reviewer_ids  = [data.azuredevops_group.this.origin_id]
-#    submitter_can_vote = false
-#    message            = "Code Reviewers have been automatically assigned to this pull request."
-#
-#    scope {
-#      repository_id  = each.value.repository_id
-#      repository_ref = each.value.repository_ref
-#      match_type     = each.value.match_type
-#    }
-#  }
-#}
-#
+
+data "azuredevops_group" "this" {
+  for_each   = length(var.azuredevops_branch_policy_auto_reviewers.group_names) > 0 ? toset(var.azuredevops_branch_policy_auto_reviewers.group_names) : {}
+  project_id = local.azuredevops_project.id
+  name       = each.key
+}
+
+resource "azuredevops_branch_policy_auto_reviewers" "this" {
+  for_each = length(var.azuredevops_branch_policy_auto_reviewers.group_names) > 0 ? local.branch_policy_scope : {}
+
+  project_id = local.azuredevops_project.id
+  enabled    = var.azuredevops_branch_policy_auto_reviewers.enabled
+  blocking   = var.azuredevops_branch_policy_auto_reviewers.blocking
+
+  settings {
+    auto_reviewer_ids  = [for group in data.azuredevops_group.this : group.origin_id]
+    submitter_can_vote = var.azuredevops_branch_policy_auto_reviewers.submitter_can_vote
+    message            = var.azuredevops_branch_policy_auto_reviewers.message
+
+    scope {
+      repository_id  = each.value.repository_id
+      repository_ref = each.value.repository_ref
+      match_type     = each.value.match_type
+    }
+  }
+}
+

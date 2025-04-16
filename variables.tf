@@ -97,3 +97,21 @@ variable "azuredevops_branch_policy_merge_types" {
   }
 }
 
+variable "azuredevops_branch_policy_auto_reviewers" {
+  description = "Auto reviewer policy settings"
+  type = object({
+    enabled             = bool
+    blocking            = bool
+    group_names         = list(string)
+    submitter_can_vote  = bool
+    message             = string
+  })
+  default = {
+    enabled            = false
+    blocking           = false
+    group_names        = []
+    submitter_can_vote = false
+    message            = "Code Reviewers have been automatically assigned to this pull request."
+  }
+}
+
