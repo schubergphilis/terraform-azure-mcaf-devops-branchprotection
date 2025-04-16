@@ -146,7 +146,7 @@ resource "azuredevops_branch_policy_build_validation" "this" {
 
   settings {
     display_name        = "Branch Validation"
-    build_definition_id = azuredevops_build_definition.build_definitions[count.index].id
+    build_definition_id = data.azuredevops_build_definition.build_definition[each.key].id
     #valid_duration      = 720 # minutes => 12 hours
 
     scope {
