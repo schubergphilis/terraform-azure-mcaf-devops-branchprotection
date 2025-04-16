@@ -136,27 +136,23 @@ output "build_definition_ids" {
     k => v.id
   }
 }
-#resource "azuredevops_branch_policy_build_validation" "this" {
-#  for_each   = local.branch_policy_scope
-#  project_id = local.azuredevops_project.id
-#
-#  enabled  = var.azuredevops_branch_policy_build_validation.enabled
-#  blocking = var.azuredevops_branch_policy_build_validation.blocking
-#
-#  settings {
-#    display_name        = "Branch Validation"
-#    build_definition_id = azuredevops_build_definition.build_definitions[count.index].id
-#    valid_duration      = 720 # minutes => 12 hours
-#
-#    scope {
-#      repository_id  = each.value.repository_id
-#      repository_ref = each.value.repository_ref
-#      match_type     = each.value.match_type
-#    }
-#  }
-#
-#  depends_on = [
-#    azuredevops_git_repository_file.default_pipeline,
-#    azuredevops_git_repository_file.default_gitignore,
-#  ]
-#}
+
+resource "azuredevops_branch_policy_build_validation" "this" {
+  for_each   = local.branch_policy_scope
+  project_id = local.azuredevops_project.id
+
+  enabled  = true
+  blocking = true
+
+  settings {
+    display_name        = "Branch Validation"
+    build_definition_id = azuredevops_build_definition.build_definitions[count.index].id
+    #valid_duration      = 720 # minutes => 12 hours
+
+    scope {
+      repository_id  = each.value.repository_id
+      repository_ref = each.value.repository_ref
+      match_type     = each.value.match_type
+    }
+  }
+}
