@@ -126,7 +126,7 @@ resource "azuredevops_branch_policy_auto_reviewers" "this" {
 resource "azuredevops_build_definition" "this" {
   project_id = local.azuredevops_project.id
   for_each   = local.branch_policy_scope
-  name       = "${each.key}-branch-validation"
+  name       = "${each.key}-branch-validation-test"
 
   repository {
     repo_type = "TfsGit"
