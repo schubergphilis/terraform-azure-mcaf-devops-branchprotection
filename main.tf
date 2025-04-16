@@ -32,7 +32,7 @@ resource "azuredevops_branch_policy_min_reviewers" "this" {
     last_pusher_cannot_approve             = var.branch_policy_min_reviewers_settings.last_pusher_cannot_approve
     allow_completion_with_rejects_or_waits = var.branch_policy_min_reviewers_settings.allow_completion_with_rejects_or_waits
     #on_push_reset_approved_votes           = var.branch_policy_min_reviewers_settings.on_push_reset_approved_votes
-    on_last_iteration_require_vote         = var.branch_policy_min_reviewers_settings.on_last_iteration_require_vote
+    on_last_iteration_require_vote = var.branch_policy_min_reviewers_settings.on_last_iteration_require_vote
     #on_push_reset_all_votes                = var.branch_policy_min_reviewers_settings.on_push_reset_all_votes
 
     scope {
@@ -44,7 +44,7 @@ resource "azuredevops_branch_policy_min_reviewers" "this" {
 }
 
 resource "azuredevops_branch_policy_work_item_linking" "this" {
-  
+
   project_id = local.azuredevops_project.id
   for_each   = local.branch_policy_scope
 
@@ -126,7 +126,7 @@ resource "azuredevops_branch_policy_auto_reviewers" "this" {
 resource "azuredevops_build_definition" "this" {
   project_id = local.azuredevops_project.id
   for_each   = local.branch_policy_scope
-  name       = "${each.key}-branch-validation-test"
+  name       = "${each.key}-branch-validation"
 
   repository {
     repo_type = "TfsGit"
@@ -135,6 +135,16 @@ resource "azuredevops_build_definition" "this" {
   }
 }
 
+data "azuredevops_build_definition" "build_definition" {
+  project_id = local.azuredevops_project.id
+  for_each   = local.branch_policy_scope
+  name       = "${each.key}-branch-validation"
+}
+
+
+output "id" {
+  value = data.azuredevops_build_definition.build_definition.id
+}
 #resource "azuredevops_branch_policy_build_validation" "this" {
 #  for_each   = local.branch_policy_scope
 #  project_id = local.azuredevops_project.id
