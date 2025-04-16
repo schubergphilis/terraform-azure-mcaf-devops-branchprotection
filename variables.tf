@@ -117,3 +117,12 @@ variable "azuredevops_branch_policy_auto_reviewers" {
   }
 }
 
+variable "azuredevops_branch_policy_build_validation" {
+  description = "Settings for Azure DevOps branch policy build validation"
+  type = object({
+    yml_path  = string
+  })
+  default ={
+      yml_path = "branch-validate.yaml"
+    }
+}

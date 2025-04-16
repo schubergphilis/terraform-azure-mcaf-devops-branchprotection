@@ -123,3 +123,39 @@ resource "azuredevops_branch_policy_auto_reviewers" "this" {
   }
 }
 
+resource "azuredevops_build_definition" "this" {
+  project_id = local.azuredevops_project.id
+  for_each   = local.branch_policy_scope
+  name       = "${each.key}-branch-validation"
+
+  repository {
+    repo_type = "TfsGit"
+    repo_id   = each.value.repository_id
+    yml_path  = "var.azuredevops_branch_policy_build_validation.yml_path"
+  }
+}
+
+#resource "azuredevops_branch_policy_build_validation" "this" {
+#  for_each   = local.branch_policy_scope
+#  project_id = local.azuredevops_project.id
+#
+#  enabled  = var.azuredevops_branch_policy_build_validation.enabled
+#  blocking = var.azuredevops_branch_policy_build_validation.blocking
+#
+#  settings {
+#    display_name        = "Branch Validation"
+#    build_definition_id = azuredevops_build_definition.build_definitions[count.index].id
+#    valid_duration      = 720 # minutes => 12 hours
+#
+#    scope {
+#      repository_id  = each.value.repository_id
+#      repository_ref = each.value.repository_ref
+#      match_type     = each.value.match_type
+#    }
+#  }
+#
+#  depends_on = [
+#    azuredevops_git_repository_file.default_pipeline,
+#    azuredevops_git_repository_file.default_gitignore,
+#  ]
+#}
