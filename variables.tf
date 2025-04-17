@@ -116,3 +116,21 @@ variable "azuredevops_branch_policy_auto_reviewers" {
     minimum_number_of_reviewers = 1
   }
 }
+
+variable "azuredevops_branch_policy_build_validation" {
+  description = "Branch policy build validation settings"
+  type = object({
+    enabled                      = optional(bool, false)
+    blocking                     = optional(bool, false)
+    valid_duration               = optional(number, 720)
+    manual_queue_only            = optional(bool, false)
+    queue_on_source_update_only  = optional(bool, true)
+  })
+  default = {
+    enabled            = false
+    blocking           = false
+    valid_duration     = 720
+    manual_queue_only  = false
+    queue_on_source_update_only = true
+  }
+}

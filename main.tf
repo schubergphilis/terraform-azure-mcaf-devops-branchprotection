@@ -141,13 +141,15 @@ resource "azuredevops_branch_policy_build_validation" "this" {
   for_each   = local.branch_policy_scope
   project_id = local.azuredevops_project.id
 
-  enabled  = true
-  blocking = true
+  enabled  = var.azuredevops_branch_policy_build_validation.enabled
+  blocking = var.azuredevops_branch_policy_build_validation.blocking
 
   settings {
-    display_name        = "Branch Validation"
+    display_name        = data.azuredevops_build_definition.build_definition[each.key].name
     build_definition_id = data.azuredevops_build_definition.build_definition[each.key].id
-    #valid_duration      = 720 # minutes => 12 hours
+    valid_duration      = var.azuredevops_branch_policy_build_validation.valid_duration
+    manual_queue_only   = var.azuredevops_branch_policy_build_validation.manual_queue_only
+    queue_on_source_update_only = var.azuredevops_branch_policy_build_validation.queue_on_source_update_only
 
     scope {
       repository_id  = each.value.repository_id
