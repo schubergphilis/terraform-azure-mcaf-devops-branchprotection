@@ -133,6 +133,6 @@ variable "azuredevops_branch_policy_build_validation" {
     valid_duration     = 720
     manual_queue_only  = false
     queue_on_source_update_only = true
-    suffix            = "build_validate"
+    suffix            = "build-validate"
   }
 }
