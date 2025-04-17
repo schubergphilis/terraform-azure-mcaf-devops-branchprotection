@@ -127,10 +127,10 @@ variable "azuredevops_branch_policy_build_validation" {
     queue_on_source_update_only  = optional(bool, true)
   })
   default = {
-    enabled            = true
-    blocking           = true
-    valid_duration     = 0
+    enabled            = false
+    blocking           = false
+    valid_duration     = 720
     manual_queue_only  = false
-    queue_on_source_update_only = false
+    queue_on_source_update_only = true
   }
 }
