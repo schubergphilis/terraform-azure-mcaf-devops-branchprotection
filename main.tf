@@ -129,14 +129,14 @@ data "azuredevops_build_definition" "build_definition" {
     for k, v in local.branch_policy_scope :
     k => v if var.azuredevops_branch_policy_build_validation.suffix != "" && v != null
   }
-  name       = "${each.key}-${var.azuredevops_branch_policy_build_validation.suffix}"
+  name = "${each.key}-${var.azuredevops_branch_policy_build_validation.suffix}"
 }
 
 resource "azuredevops_branch_policy_build_validation" "this" {
   for_each   = {
     for k, v in local.branch_policy_scope :
     k => v if var.azuredevops_branch_policy_build_validation.suffix != "" &&
-            data.azuredevops_build_definition.build_definition[k].id != null
+            try(data.azuredevops_build_definition.build_definition[k], null) != null
   }
   project_id = local.azuredevops_project.id
 
@@ -157,4 +157,3 @@ resource "azuredevops_branch_policy_build_validation" "this" {
     }
   }
 }
-
