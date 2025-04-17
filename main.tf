@@ -125,8 +125,11 @@ resource "azuredevops_branch_policy_auto_reviewers" "this" {
 
 data "azuredevops_build_definition" "build_definition" {
   project_id = local.azuredevops_project.id
-  for_each   = local.branch_policy_scope
-  name       = var.azuredevops_branch_policy_build_validation.suffix != "" ? "${each.key}-${var.azuredevops_branch_policy_build_validation.suffix}" : null
+  for_each   = {
+    for k, v in local.branch_policy_scope :
+    k => v if var.azuredevops_branch_policy_build_validation.suffix != ""
+  }
+  name       = "${each.key}-${var.azuredevops_branch_policy_build_validation.suffix}"
 }
 
 output "build_definition_ids" {
