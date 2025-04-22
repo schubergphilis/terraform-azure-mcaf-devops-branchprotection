@@ -154,12 +154,12 @@ Fields:
   - minimum_number_of_reviewers (required): Minimum number of reviewers required.
 DESCRIPTION
   type = object({
-    enabled             = bool
-    blocking            = bool
+    enabled             = optional(bool, false)
+    blocking            = optional(bool, false)
     group_names         = list(string)
-    submitter_can_vote  = bool
-    message             = string
-    minimum_number_of_reviewers = number
+    submitter_can_vote  = optional(bool, false)
+    message             = optional(string, "Code Reviewers")
+    minimum_number_of_reviewers = optional(number, 1)
   })
   default = {
     enabled            = false
