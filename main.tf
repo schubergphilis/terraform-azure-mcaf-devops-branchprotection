@@ -126,7 +126,7 @@ resource "azuredevops_branch_policy_auto_reviewers" "this" {
 # Data block to fetch build definition details for build validation policy
 data "azuredevops_build_definition" "build_definition" {
   project_id = local.azuredevops_project.id
-  for_each   = {
+  for_each = {
     for k, v in local.branch_policy_scope :
     k => v if var.azuredevops_branch_policy_build_validation.suffix != "" && v != null
   }
@@ -135,10 +135,10 @@ data "azuredevops_build_definition" "build_definition" {
 
 # Resource to configure build validation policy for branch protection
 resource "azuredevops_branch_policy_build_validation" "this" {
-  for_each   = {
+  for_each = {
     for k, v in local.branch_policy_scope :
     k => v if var.azuredevops_branch_policy_build_validation.suffix != "" &&
-            try(data.azuredevops_build_definition.build_definition[k], null) != null
+    try(data.azuredevops_build_definition.build_definition[k], null) != null
   }
   project_id = local.azuredevops_project.id
 
@@ -146,10 +146,10 @@ resource "azuredevops_branch_policy_build_validation" "this" {
   blocking = var.azuredevops_branch_policy_build_validation.blocking
 
   settings {
-    display_name        = data.azuredevops_build_definition.build_definition[each.key].name
-    build_definition_id = data.azuredevops_build_definition.build_definition[each.key].id
-    valid_duration      = var.azuredevops_branch_policy_build_validation.valid_duration
-    manual_queue_only   = var.azuredevops_branch_policy_build_validation.manual_queue_only
+    display_name                = data.azuredevops_build_definition.build_definition[each.key].name
+    build_definition_id         = data.azuredevops_build_definition.build_definition[each.key].id
+    valid_duration              = var.azuredevops_branch_policy_build_validation.valid_duration
+    manual_queue_only           = var.azuredevops_branch_policy_build_validation.manual_queue_only
     queue_on_source_update_only = var.azuredevops_branch_policy_build_validation.queue_on_source_update_only
 
     scope {

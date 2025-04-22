@@ -132,8 +132,8 @@ DESCRIPTION
     allow_rebase_with_merge       = optional(bool, false)
   })
   default = {
-    enabled  = false
-    blocking = false
+    enabled                       = false
+    blocking                      = false
     allow_squash                  = false
     allow_rebase_and_fast_forward = false
     allow_basic_no_fast_forward   = false
@@ -154,19 +154,19 @@ Fields:
   - minimum_number_of_reviewers (required): Minimum number of reviewers required.
 DESCRIPTION
   type = object({
-    enabled             = optional(bool, false)
-    blocking            = optional(bool, false)
-    group_names         = list(string)
-    submitter_can_vote  = optional(bool, false)
-    message             = optional(string, "Code Reviewers")
+    enabled                     = optional(bool, false)
+    blocking                    = optional(bool, false)
+    group_names                 = list(string)
+    submitter_can_vote          = optional(bool, false)
+    message                     = optional(string, "Code Reviewers")
     minimum_number_of_reviewers = optional(number, 1)
   })
   default = {
-    enabled            = false
-    blocking           = false
-    group_names        = []
-    submitter_can_vote = false
-    message            = "Code Reviewers have been automatically assigned to this pull request."
+    enabled                     = false
+    blocking                    = false
+    group_names                 = []
+    submitter_can_vote          = false
+    message                     = "Code Reviewers have been automatically assigned to this pull request."
     minimum_number_of_reviewers = 1
   }
 }
@@ -184,19 +184,19 @@ Fields:
   - suffix (optional): Suffix to append to the build policy name. Default is an empty string.
 DESCRIPTION
   type = object({
-    enabled                      = optional(bool, false)
-    blocking                     = optional(bool, false)
-    valid_duration               = optional(number, 720)
-    manual_queue_only            = optional(bool, false)
-    queue_on_source_update_only  = optional(bool, true)
-    suffix                       = optional(string, "")
+    enabled                     = optional(bool, false)
+    blocking                    = optional(bool, false)
+    valid_duration              = optional(number, 720)
+    manual_queue_only           = optional(bool, false)
+    queue_on_source_update_only = optional(bool, true)
+    suffix                      = optional(string, "")
   })
   default = {
-    enabled            = false
-    blocking           = false
-    valid_duration     = 720
-    manual_queue_only  = false
+    enabled                     = false
+    blocking                    = false
+    valid_duration              = 720
+    manual_queue_only           = false
     queue_on_source_update_only = true
-    suffix            = ""
+    suffix                      = ""
   }
 }
