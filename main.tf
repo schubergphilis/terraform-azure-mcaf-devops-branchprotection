@@ -1,23 +1,21 @@
+# ----------------------------------------------------------------------------------------
+# Azure DevOps Branch Protection Policies
+#
+# DESCRIPTION
+# This module can be used to enable/ configure branch protection policies on Azure DevOps.
+# ----------------------------------------------------------------------------------------
+
+# Data block to fetch details of the Azure DevOps project by its name
 data "azuredevops_project" "this" {
   name = var.azure_devops.project_name
 }
 
+# Data block to fetch all Git repositories within the specified Azure DevOps project
 data "azuredevops_git_repositories" "all" {
   project_id = data.azuredevops_project.this.id
 }
 
-locals {
-  branch_policy_scope = {
-    for repo in data.azuredevops_git_repositories.all.repositories :
-    repo.name => {
-      repository_id  = repo.id
-      repository_ref = repo.default_branch
-      match_type     = "Exact"
-    }
-  }
-  azuredevops_project = try(data.azuredevops_project.this, data.azuredevops_project.this)
-}
-
+# Resource to configure minimum reviewers policy for branch protection
 resource "azuredevops_branch_policy_min_reviewers" "this" {
   for_each = (
     var.branch_policy_min_reviewers_settings != null &&
@@ -31,9 +29,7 @@ resource "azuredevops_branch_policy_min_reviewers" "this" {
     submitter_can_vote                     = var.branch_policy_min_reviewers_settings.submitter_can_vote
     last_pusher_cannot_approve             = var.branch_policy_min_reviewers_settings.last_pusher_cannot_approve
     allow_completion_with_rejects_or_waits = var.branch_policy_min_reviewers_settings.allow_completion_with_rejects_or_waits
-    #on_push_reset_approved_votes           = var.branch_policy_min_reviewers_settings.on_push_reset_approved_votes
-    on_last_iteration_require_vote = var.branch_policy_min_reviewers_settings.on_last_iteration_require_vote
-    #on_push_reset_all_votes                = var.branch_policy_min_reviewers_settings.on_push_reset_all_votes
+    on_last_iteration_require_vote         = var.branch_policy_min_reviewers_settings.on_last_iteration_require_vote
 
     scope {
       repository_id  = each.value.repository_id
@@ -43,8 +39,8 @@ resource "azuredevops_branch_policy_min_reviewers" "this" {
   }
 }
 
+# Resource to enforce work item linking policy for branch protection
 resource "azuredevops_branch_policy_work_item_linking" "this" {
-
   project_id = local.azuredevops_project.id
   for_each   = local.branch_policy_scope
 
@@ -60,6 +56,7 @@ resource "azuredevops_branch_policy_work_item_linking" "this" {
   }
 }
 
+# Resource to enforce comment resolution policy for branch protection
 resource "azuredevops_branch_policy_comment_resolution" "this" {
   project_id = local.azuredevops_project.id
   for_each   = local.branch_policy_scope
@@ -76,6 +73,7 @@ resource "azuredevops_branch_policy_comment_resolution" "this" {
   }
 }
 
+# Resource to configure allowed merge types for branch protection
 resource "azuredevops_branch_policy_merge_types" "this" {
   project_id = local.azuredevops_project.id
   for_each   = local.branch_policy_scope
@@ -97,12 +95,14 @@ resource "azuredevops_branch_policy_merge_types" "this" {
   }
 }
 
+# Data block to fetch Azure DevOps group details by group names
 data "azuredevops_group" "this" {
   for_each   = length(var.azuredevops_branch_policy_auto_reviewers.group_names) > 0 ? toset(var.azuredevops_branch_policy_auto_reviewers.group_names) : toset([])
   project_id = local.azuredevops_project.id
   name       = each.key
 }
 
+# Resource to configure auto reviewers policy for branch protection
 resource "azuredevops_branch_policy_auto_reviewers" "this" {
   for_each = length(var.azuredevops_branch_policy_auto_reviewers.group_names) > 0 ? local.branch_policy_scope : {}
 
@@ -123,6 +123,7 @@ resource "azuredevops_branch_policy_auto_reviewers" "this" {
   }
 }
 
+# Data block to fetch build definition details for build validation policy
 data "azuredevops_build_definition" "build_definition" {
   project_id = local.azuredevops_project.id
   for_each   = {
@@ -132,6 +133,7 @@ data "azuredevops_build_definition" "build_definition" {
   name = "${each.key}-${var.azuredevops_branch_policy_build_validation.suffix}"
 }
 
+# Resource to configure build validation policy for branch protection
 resource "azuredevops_branch_policy_build_validation" "this" {
   for_each   = {
     for k, v in local.branch_policy_scope :
