@@ -1,13 +1,6 @@
 terraform {
   required_version = ">= 1.9"
   backend "azurerm" {
-    tenant_id            = "64f67a41-925a-440b-bcc8-9873b0715571"
-    subscription_id      = "3afadbde-4850-4cd3-81ad-ec1c44805fa9"
-    resource_group_name  = "apgp01-ccoe-gwc-tfst-rsg"
-    storage_account_name = "apgp01ccoegwctfststa"
-    container_name       = "tfstate-workload-onboarding"
-    key                  = "vhub/wrko.tfstate"
-    use_azuread_auth     = true
   }
 
   required_providers {
