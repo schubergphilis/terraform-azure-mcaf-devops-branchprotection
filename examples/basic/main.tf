@@ -77,7 +77,3 @@ module "azdo_branch_protection" {
     suffix                      = "branch-validate"
   }
 }
-
-
-
-
