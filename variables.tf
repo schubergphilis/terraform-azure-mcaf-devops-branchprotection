@@ -1,16 +1,31 @@
-variable "azure_devops" {
-  type = object({
-    org          = string
-    project_name = string
-  })
-  description = <<DESCRIPTION
-Azure DevOps Configuration.
+#variable "project_name" {
+#  type = string
+#  description = <<DESCRIPTION
+#Azure DevOps project name.
+#
+#Example:
+#  project_name = "my-project" # Name of the project
+#DESCRIPTION
+#}
 
-Example:
-  azure_devops = {
-    org          = "example" # Name of the Azure DevOps organization (e.g., 'example' when the Azure DevOps URL is https://dev.azure.com/example)
-    project_name = "my-project" # Name of the project
-  }
+variable "project_id" {
+  type        = string
+  description = "The ID of the Azure DevOps project."
+}
+
+variable "repositories" {
+  type = list(object({
+    id             = string
+    name           = string
+    default_branch = string
+  }))
+  description = <<DESCRIPTION
+A list of repositories with their details.
+
+Fields:
+  - id (required): The unique identifier of the repository.
+  - name (required): The name of the repository.
+  - default_branch (required): The default branch of the repository.
 DESCRIPTION
 }
 

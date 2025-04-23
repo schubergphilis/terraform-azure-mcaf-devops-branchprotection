@@ -6,19 +6,19 @@
 # ----------------------------------------------------------------------------------------
 
 # Data block to fetch details of the Azure DevOps project by its name
-data "azuredevops_project" "this" {
-  name = var.azure_devops.project_name
-}
-
-# Data block to fetch all Git repositories within the specified Azure DevOps project
-data "azuredevops_git_repositories" "all" {
-  project_id = data.azuredevops_project.this.id
-}
+#data "azuredevops_project" "this" {
+#  name = var.project_name
+#}
+#
+## Data block to fetch all Git repositories within the specified Azure DevOps project
+#data "azuredevops_git_repositories" "all" {
+#  project_id = data.azuredevops_project.this.id
+#}
 
 # Local values to define branch policy scope and project details
 locals {
   branch_policy_scope = {
-    for repo in data.azuredevops_git_repositories.all.repositories :
+    for repo in var.repositories :
     repo.name => {
       repository_id  = repo.id
       repository_ref = repo.default_branch
@@ -35,7 +35,7 @@ resource "azuredevops_branch_policy_min_reviewers" "this" {
     try(var.branch_policy_min_reviewers.reviewer_count, null) != null
   ) ? local.branch_policy_scope : {}
 
-  project_id = local.azuredevops_project.id
+  project_id = var.project_id
 
   settings {
     reviewer_count                         = var.branch_policy_min_reviewers.reviewer_count
@@ -54,7 +54,7 @@ resource "azuredevops_branch_policy_min_reviewers" "this" {
 
 # Resource to enforce work item linking policy for branch protection
 resource "azuredevops_branch_policy_work_item_linking" "this" {
-  project_id = local.azuredevops_project.id
+  project_id = var.project_id
   for_each   = local.branch_policy_scope
 
   enabled  = var.branch_policy_work_item_linking.enabled
@@ -71,7 +71,7 @@ resource "azuredevops_branch_policy_work_item_linking" "this" {
 
 # Resource to enforce comment resolution policy for branch protection
 resource "azuredevops_branch_policy_comment_resolution" "this" {
-  project_id = local.azuredevops_project.id
+  project_id = var.project_id
   for_each   = local.branch_policy_scope
 
   enabled  = var.branch_policy_comment_resolution.enabled
@@ -88,7 +88,7 @@ resource "azuredevops_branch_policy_comment_resolution" "this" {
 
 # Resource to configure allowed merge types for branch protection
 resource "azuredevops_branch_policy_merge_types" "this" {
-  project_id = local.azuredevops_project.id
+  project_id = var.project_id
   for_each   = local.branch_policy_scope
 
   enabled  = var.branch_policy_merge_types.enabled
@@ -111,7 +111,7 @@ resource "azuredevops_branch_policy_merge_types" "this" {
 # Data block to fetch Azure DevOps group details by group names
 data "azuredevops_group" "this" {
   for_each   = length(var.branch_policy_auto_reviewers.group_names) > 0 ? toset(var.branch_policy_auto_reviewers.group_names) : toset([])
-  project_id = local.azuredevops_project.id
+  project_id = var.project_id
   name       = each.key
 }
 
@@ -119,7 +119,7 @@ data "azuredevops_group" "this" {
 resource "azuredevops_branch_policy_auto_reviewers" "this" {
   for_each = length(var.branch_policy_auto_reviewers.group_names) > 0 ? local.branch_policy_scope : {}
 
-  project_id = local.azuredevops_project.id
+  project_id = var.project_id
   enabled    = var.branch_policy_auto_reviewers.enabled
   blocking   = var.branch_policy_auto_reviewers.blocking
 
@@ -138,7 +138,7 @@ resource "azuredevops_branch_policy_auto_reviewers" "this" {
 
 # Data block to fetch build definition details for build validation policy
 data "azuredevops_build_definition" "build_definition" {
-  project_id = local.azuredevops_project.id
+  project_id = var.project_id
   for_each = {
     for k, v in local.branch_policy_scope :
     k => v if var.branch_policy_build_validation.suffix != "" && v != null
@@ -153,7 +153,7 @@ resource "azuredevops_branch_policy_build_validation" "this" {
     k => v if var.branch_policy_build_validation.suffix != "" &&
     try(data.azuredevops_build_definition.build_definition[k], null) != null
   }
-  project_id = local.azuredevops_project.id
+  project_id = var.project_id
 
   enabled  = var.branch_policy_build_validation.enabled
   blocking = var.branch_policy_build_validation.blocking
@@ -172,3 +172,4 @@ resource "azuredevops_branch_policy_build_validation" "this" {
     }
   }
 }
+
