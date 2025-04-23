@@ -15,15 +15,17 @@ output "azure_devops_repositories" {
 
 # Output the branch policy settings for each repository
 output "branch_policy_settings" {
+  description = "A map of branch policy settings for each repository."
   value = {
-    for repo_id, repo_settings in local.branch_policy_scope :
-    repo_id => {
-      min_reviewers_settings = try(azuredevops_branch_policy_min_reviewers.this[repo_id].settings, null)
-      work_item_linking      = try(azuredevops_branch_policy_work_item_linking.this[repo_id].settings, null)
-      comment_resolution     = try(azuredevops_branch_policy_comment_resolution.this[repo_id].settings, null)
-      merge_types            = try(azuredevops_branch_policy_merge_types.this[repo_id].settings, null)
-      auto_reviewers         = try(azuredevops_branch_policy_auto_reviewers.this[repo_id].settings, null)
-      build_validation       = try(azuredevops_branch_policy_build_validation.this[repo_id].settings, null)
+    for repo, settings in local.branch_policy_scope :
+    repo => {
+      min_reviewers_settings = try(azuredevops_branch_policy_min_reviewers.this[repo].settings, null)
+      work_item_linking      = try(azuredevops_branch_policy_work_item_linking.this[repo].settings, null)
+      comment_resolution     = try(azuredevops_branch_policy_comment_resolution.this[repo].settings, null)
+      merge_types            = try(azuredevops_branch_policy_merge_types.this[repo].settings, null)
+      auto_reviewers         = try(azuredevops_branch_policy_auto_reviewers.this[repo].settings, null)
+      build_validation       = try(azuredevops_branch_policy_build_validation.this[repo].settings, null)
     }
   }
 }
+    
