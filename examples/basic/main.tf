@@ -29,13 +29,22 @@ provider "azuread" {
   use_oidc = true
 }
 
+# Data block to fetch details of the Azure DevOps project by its name
+data "azuredevops_project" "this" {
+  name = "example"
+}
+
+# Data block to fetch all Git repositories within the specified Azure DevOps project
+data "azuredevops_git_repositories" "all" {
+  project_id = data.azuredevops_project.this.id
+}
+
 module "azdo_branch_protection" {
   source = "../.."
-  azure_devops = {
-    org          = "example"
-    project_name = "exampleproject"
-  }
-  
+
+  project_id                       = data.azuredevops_project.this.id
+  repositories                     = data.azuredevops_git_repositories.all.repositories
+
   branch_policy_auto_reviewers = {
     enabled            = true
     blocking           = true

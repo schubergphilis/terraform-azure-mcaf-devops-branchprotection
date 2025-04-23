@@ -5,16 +5,6 @@
 # This module can be used to enable/ configure branch protection policies on Azure DevOps.
 # ----------------------------------------------------------------------------------------
 
-# Data block to fetch details of the Azure DevOps project by its name
-#data "azuredevops_project" "this" {
-#  name = var.project_name
-#}
-#
-## Data block to fetch all Git repositories within the specified Azure DevOps project
-#data "azuredevops_git_repositories" "all" {
-#  project_id = data.azuredevops_project.this.id
-#}
-
 # Local values to define branch policy scope and project details
 locals {
   branch_policy_scope = {
