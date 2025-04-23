@@ -1,13 +1,3 @@
-#variable "project_name" {
-#  type = string
-#  description = <<DESCRIPTION
-#Azure DevOps project name.
-#
-#Example:
-#  project_name = "my-project" # Name of the project
-#DESCRIPTION
-#}
-
 variable "project_id" {
   type        = string
   description = "The ID of the Azure DevOps project."
