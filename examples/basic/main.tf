@@ -35,10 +35,8 @@ module "azdo_branch_protection" {
     org          = "example"
     project_name = "exampleproject"
   }
-  name       = "example workload"
-  short_name = "exmp"
-  location   = "eastus"
-  azuredevops_branch_policy_auto_reviewers = {
+  
+  branch_policy_auto_reviewers = {
     enabled            = true
     blocking           = true
     submitter_can_vote = false
@@ -47,19 +45,19 @@ module "azdo_branch_protection" {
 
   }
 
-  branch_policy_min_reviewers_settings = {
+  branch_policy_min_reviewers = {
     reviewer_count                         = 1
     last_pusher_cannot_approve             = true
     allow_completion_with_rejects_or_waits = true
     on_last_iteration_require_vote         = true
   }
 
-  azuredevops_branch_policy_comment_resolution = {
+  branch_policy_comment_resolution = {
     enabled  = true
     blocking = true
   }
 
-  azuredevops_branch_policy_merge_types = {
+  branch_policy_merge_types = {
     enabled                       = true
     blocking                      = true
     allow_squash                  = true
@@ -68,7 +66,7 @@ module "azdo_branch_protection" {
     allow_rebase_with_merge       = false
   }
 
-  azuredevops_branch_policy_build_validation = {
+  branch_policy_build_validation = {
     enabled                     = true
     blocking                    = false
     valid_duration              = 0

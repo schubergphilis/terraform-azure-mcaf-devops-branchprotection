@@ -15,21 +15,34 @@ data "azuredevops_git_repositories" "all" {
   project_id = data.azuredevops_project.this.id
 }
 
+# Local values to define branch policy scope and project details
+locals {
+  branch_policy_scope = {
+    for repo in data.azuredevops_git_repositories.all.repositories :
+    repo.name => {
+      repository_id  = repo.id
+      repository_ref = repo.default_branch
+      match_type     = "Exact"
+    }
+  }
+  azuredevops_project = try(data.azuredevops_project.this, data.azuredevops_project.this)
+}
+
 # Resource to configure minimum reviewers policy for branch protection
 resource "azuredevops_branch_policy_min_reviewers" "this" {
   for_each = (
-    var.branch_policy_min_reviewers_settings != null &&
-    try(var.branch_policy_min_reviewers_settings.reviewer_count, null) != null
+    var.branch_policy_min_reviewers != null &&
+    try(var.branch_policy_min_reviewers.reviewer_count, null) != null
   ) ? local.branch_policy_scope : {}
 
   project_id = local.azuredevops_project.id
 
   settings {
-    reviewer_count                         = var.branch_policy_min_reviewers_settings.reviewer_count
-    submitter_can_vote                     = var.branch_policy_min_reviewers_settings.submitter_can_vote
-    last_pusher_cannot_approve             = var.branch_policy_min_reviewers_settings.last_pusher_cannot_approve
-    allow_completion_with_rejects_or_waits = var.branch_policy_min_reviewers_settings.allow_completion_with_rejects_or_waits
-    on_last_iteration_require_vote         = var.branch_policy_min_reviewers_settings.on_last_iteration_require_vote
+    reviewer_count                         = var.branch_policy_min_reviewers.reviewer_count
+    submitter_can_vote                     = var.branch_policy_min_reviewers.submitter_can_vote
+    last_pusher_cannot_approve             = var.branch_policy_min_reviewers.last_pusher_cannot_approve
+    allow_completion_with_rejects_or_waits = var.branch_policy_min_reviewers.allow_completion_with_rejects_or_waits
+    on_last_iteration_require_vote         = var.branch_policy_min_reviewers.on_last_iteration_require_vote
 
     scope {
       repository_id  = each.value.repository_id
@@ -44,8 +57,8 @@ resource "azuredevops_branch_policy_work_item_linking" "this" {
   project_id = local.azuredevops_project.id
   for_each   = local.branch_policy_scope
 
-  enabled  = var.azuredevops_branch_policy_work_item_linking.enabled
-  blocking = var.azuredevops_branch_policy_work_item_linking.blocking
+  enabled  = var.branch_policy_work_item_linking.enabled
+  blocking = var.branch_policy_work_item_linking.blocking
 
   settings {
     scope {
@@ -61,8 +74,8 @@ resource "azuredevops_branch_policy_comment_resolution" "this" {
   project_id = local.azuredevops_project.id
   for_each   = local.branch_policy_scope
 
-  enabled  = var.azuredevops_branch_policy_comment_resolution.enabled
-  blocking = var.azuredevops_branch_policy_comment_resolution.blocking
+  enabled  = var.branch_policy_comment_resolution.enabled
+  blocking = var.branch_policy_comment_resolution.blocking
 
   settings {
     scope {
@@ -78,14 +91,14 @@ resource "azuredevops_branch_policy_merge_types" "this" {
   project_id = local.azuredevops_project.id
   for_each   = local.branch_policy_scope
 
-  enabled  = var.azuredevops_branch_policy_merge_types.enabled
-  blocking = var.azuredevops_branch_policy_merge_types.blocking
+  enabled  = var.branch_policy_merge_types.enabled
+  blocking = var.branch_policy_merge_types.blocking
 
   settings {
-    allow_squash                  = var.azuredevops_branch_policy_merge_types.allow_squash
-    allow_rebase_and_fast_forward = var.azuredevops_branch_policy_merge_types.allow_rebase_and_fast_forward
-    allow_basic_no_fast_forward   = var.azuredevops_branch_policy_merge_types.allow_basic_no_fast_forward
-    allow_rebase_with_merge       = var.azuredevops_branch_policy_merge_types.allow_rebase_with_merge
+    allow_squash                  = var.branch_policy_merge_types.allow_squash
+    allow_rebase_and_fast_forward = var.branch_policy_merge_types.allow_rebase_and_fast_forward
+    allow_basic_no_fast_forward   = var.branch_policy_merge_types.allow_basic_no_fast_forward
+    allow_rebase_with_merge       = var.branch_policy_merge_types.allow_rebase_with_merge
 
     scope {
       repository_id  = each.value.repository_id
@@ -97,23 +110,23 @@ resource "azuredevops_branch_policy_merge_types" "this" {
 
 # Data block to fetch Azure DevOps group details by group names
 data "azuredevops_group" "this" {
-  for_each   = length(var.azuredevops_branch_policy_auto_reviewers.group_names) > 0 ? toset(var.azuredevops_branch_policy_auto_reviewers.group_names) : toset([])
+  for_each   = length(var.branch_policy_auto_reviewers.group_names) > 0 ? toset(var.branch_policy_auto_reviewers.group_names) : toset([])
   project_id = local.azuredevops_project.id
   name       = each.key
 }
 
 # Resource to configure auto reviewers policy for branch protection
 resource "azuredevops_branch_policy_auto_reviewers" "this" {
-  for_each = length(var.azuredevops_branch_policy_auto_reviewers.group_names) > 0 ? local.branch_policy_scope : {}
+  for_each = length(var.branch_policy_auto_reviewers.group_names) > 0 ? local.branch_policy_scope : {}
 
   project_id = local.azuredevops_project.id
-  enabled    = var.azuredevops_branch_policy_auto_reviewers.enabled
-  blocking   = var.azuredevops_branch_policy_auto_reviewers.blocking
+  enabled    = var.branch_policy_auto_reviewers.enabled
+  blocking   = var.branch_policy_auto_reviewers.blocking
 
   settings {
     auto_reviewer_ids  = [for group in data.azuredevops_group.this : group.origin_id]
-    submitter_can_vote = var.azuredevops_branch_policy_auto_reviewers.submitter_can_vote
-    message            = var.azuredevops_branch_policy_auto_reviewers.message
+    submitter_can_vote = var.branch_policy_auto_reviewers.submitter_can_vote
+    message            = var.branch_policy_auto_reviewers.message
 
     scope {
       repository_id  = each.value.repository_id
@@ -128,29 +141,29 @@ data "azuredevops_build_definition" "build_definition" {
   project_id = local.azuredevops_project.id
   for_each = {
     for k, v in local.branch_policy_scope :
-    k => v if var.azuredevops_branch_policy_build_validation.suffix != "" && v != null
+    k => v if var.branch_policy_build_validation.suffix != "" && v != null
   }
-  name = "${each.key}-${var.azuredevops_branch_policy_build_validation.suffix}"
+  name = "${each.key}-${var.branch_policy_build_validation.suffix}"
 }
 
 # Resource to configure build validation policy for branch protection
 resource "azuredevops_branch_policy_build_validation" "this" {
   for_each = {
     for k, v in local.branch_policy_scope :
-    k => v if var.azuredevops_branch_policy_build_validation.suffix != "" &&
+    k => v if var.branch_policy_build_validation.suffix != "" &&
     try(data.azuredevops_build_definition.build_definition[k], null) != null
   }
   project_id = local.azuredevops_project.id
 
-  enabled  = var.azuredevops_branch_policy_build_validation.enabled
-  blocking = var.azuredevops_branch_policy_build_validation.blocking
+  enabled  = var.branch_policy_build_validation.enabled
+  blocking = var.branch_policy_build_validation.blocking
 
   settings {
     display_name                = data.azuredevops_build_definition.build_definition[each.key].name
     build_definition_id         = data.azuredevops_build_definition.build_definition[each.key].id
-    valid_duration              = var.azuredevops_branch_policy_build_validation.valid_duration
-    manual_queue_only           = var.azuredevops_branch_policy_build_validation.manual_queue_only
-    queue_on_source_update_only = var.azuredevops_branch_policy_build_validation.queue_on_source_update_only
+    valid_duration              = var.branch_policy_build_validation.valid_duration
+    manual_queue_only           = var.branch_policy_build_validation.manual_queue_only
+    queue_on_source_update_only = var.branch_policy_build_validation.queue_on_source_update_only
 
     scope {
       repository_id  = each.value.repository_id

@@ -14,7 +14,7 @@ Example:
 DESCRIPTION
 }
 
-variable "branch_policy_min_reviewers_settings" {
+variable "branch_policy_min_reviewers" {
   description = <<DESCRIPTION
 Optional settings for the branch policy minimum reviewers. If not provided, the policy will be skipped.
 
@@ -35,7 +35,7 @@ DESCRIPTION
   default = null
 }
 
-variable "azuredevops_branch_policy_work_item_linking" {
+variable "branch_policy_work_item_linking" {
   description = <<DESCRIPTION
 Optional settings for the branch policy work item linking.
 
@@ -53,7 +53,7 @@ DESCRIPTION
   }
 }
 
-variable "azuredevops_branch_policy_comment_resolution" {
+variable "branch_policy_comment_resolution" {
   description = <<DESCRIPTION
 Optional settings for the branch policy comment resolution.
 
@@ -71,7 +71,7 @@ DESCRIPTION
   }
 }
 
-variable "azuredevops_branch_policy_merge_types" {
+variable "branch_policy_merge_types" {
   description = <<DESCRIPTION
 Settings for Azure DevOps branch policy merge types.
 
@@ -101,7 +101,7 @@ DESCRIPTION
   }
 }
 
-variable "azuredevops_branch_policy_auto_reviewers" {
+variable "branch_policy_auto_reviewers" {
   description = <<DESCRIPTION
 Auto reviewer policy settings.
 
@@ -131,7 +131,7 @@ DESCRIPTION
   }
 }
 
-variable "azuredevops_branch_policy_build_validation" {
+variable "branch_policy_build_validation" {
   description = <<DESCRIPTION
 Branch policy build validation settings.
 
