@@ -25,7 +25,6 @@ locals {
       match_type     = "Exact"
     }
   }
-  azuredevops_project = try(data.azuredevops_project.this, data.azuredevops_project.this)
 }
 
 # Resource to configure minimum reviewers policy for branch protection
