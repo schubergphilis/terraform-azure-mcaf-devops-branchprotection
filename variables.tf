@@ -6,7 +6,6 @@ variable "project_id" {
 variable "repositories" {
   type = list(object({
     id             = string
-    name           = string
     default_branch = string
   }))
   description = <<DESCRIPTION
@@ -14,7 +13,6 @@ A list of repositories with their details.
 
 Fields:
   - id (required): The unique identifier of the repository.
-  - name (required): The name of the repository.
   - default_branch (required): The default branch of the repository.
 DESCRIPTION
 }
