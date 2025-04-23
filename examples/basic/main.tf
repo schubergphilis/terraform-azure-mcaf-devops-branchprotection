@@ -42,8 +42,8 @@ data "azuredevops_git_repositories" "all" {
 module "azdo_branch_protection" {
   source = "../.."
 
-  project_id                       = data.azuredevops_project.this.id
-  repositories                     = data.azuredevops_git_repositories.all.repositories
+  project_id   = data.azuredevops_project.this.id
+  repositories = data.azuredevops_git_repositories.all.repositories
 
   branch_policy_auto_reviewers = {
     enabled            = true

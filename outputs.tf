@@ -1,13 +1,13 @@
 # Output the Azure DevOps project details
 output "azure_devops_project" {
   description = "Details of the Azure DevOps project."
-  value = var.project_id
+  value       = var.project_id
 }
 
 # Output the list of repositories in the Azure DevOps project
 output "azure_devops_repositories" {
   description = "List of repositories in the Azure DevOps project."
-  value = var.repositories
+  value       = var.repositories
 }
 
 # Output the branch policy settings for each repository
