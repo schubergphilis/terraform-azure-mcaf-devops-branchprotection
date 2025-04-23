@@ -9,10 +9,9 @@
 locals {
   branch_policy_scope = {
     for repo in var.repositories :
-    repo.id => {
+    repo.name => {
       repository_id   = repo.id
       repository_ref  = repo.default_branch
-      repository_name = repo.name
       match_type      = "Exact"
     }
   }
@@ -133,7 +132,7 @@ data "azuredevops_build_definition" "build_definition" {
     for k, v in local.branch_policy_scope :
     k => v if var.branch_policy_build_validation.suffix != "" && v != null
   }
-  name = "${each.value.repository_name}-${var.branch_policy_build_validation.suffix}"
+  name = "${each.key}-${var.branch_policy_build_validation.suffix}"
 }
 
 # Resource to configure build validation policy for branch protection
