@@ -49,7 +49,7 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_azure_devops_project"></a> [azure\_devops\_project](#output\_azure\_devops\_project) | Details of the Azure DevOps project. |
-| <a name="output_azure_devops_repositories"></a> [azure\_devops\_repositories](#output\_azure\_devops\_repositories) | List of repositories in the Azure DevOps project. |
-| <a name="output_branch_policy_settings"></a> [branch\_policy\_settings](#output\_branch\_policy\_settings) | Branch policy settings for each repository. |
+| <a name="output_azure_devops_project_id"></a> [azure\_devops\_project\_id](#output\_azure\_devops\_project\_id) | Details of the Azure DevOps project. |
+| <a name="output_azure_devops_repositories"></a> [azure\_devops\_repositories](#output\_azure\_devops\_repositories) | A map of Azure DevOps repository names to their IDs. |
+| <a name="output_branch_policy_settings"></a> [branch\_policy\_settings](#output\_branch\_policy\_settings) | Output the branch policy settings for each repository |
 <!-- END_TF_DOCS -->
